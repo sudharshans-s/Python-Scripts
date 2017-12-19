@@ -1,0 +1,36 @@
+import paramiko
+import time
+import datetime
+import getpass
+import os
+import sys
+#Getting IP and U/N
+USER = raw_input("Username: ")
+PASSWORD = getpass.getpass()
+IP_LIST = open("SWITCH_IP")
+NOW = datetime.date.today()
+#Get Show-Tech
+for line in IP_LIST:
+	print "Getting Show-Tech from " + (line)
+	HOST = line.strip()
+	ssh_client = paramiko.SSHClient()
+	ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	ssh_client.connect(hostname=HOST,username=USER,password=PASSWORD)
+	print "Successful connection", HOST
+	stdin, stdout, stderr = ssh_client.exec_command("show tech-support")
+	output = stdout.read()
+	saveoutput = open('Device' + HOST + '_' + str(NOW), 'w')
+	saveoutput.write(str(output))
+	saveoutput.close()
+	#remote_connection = ssh_client.invoke_shell()
+	#remote_connection.send("terminal length 0\n")
+	#remote_connection.send("show tech\n")
+	#time.sleep(10)
+	#remote_connection.send("exit\n")
+	#output = remote_connection.recv(99999)
+	#print output
+	#saveoutput = open("DEVICE_" + HOST + "_" + str(NOW), "w")
+	#saveoutput.write(output)
+	#saveoutput.close
+	#saveoutput
+	ssh_client.close
